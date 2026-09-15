@@ -48,6 +48,14 @@ class ApiService {
     return _dio.post(path, data: data);
   }
 
+  Future<Response> postForm(String path, {required Map<String, dynamic> data}) {
+    return _dio.post(
+      path,
+      data: FormData.fromMap(data),
+      options: Options(contentType: 'application/x-www-form-urlencoded'),
+    );
+  }
+
   Future<Response> put(String path, {dynamic data}) {
     return _dio.put(path, data: data);
   }

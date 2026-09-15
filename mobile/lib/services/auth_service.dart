@@ -20,7 +20,8 @@ class AuthService {
 
   Future<AuthResult> login(String email, String password) async {
     try {
-      final response = await _api.post(
+      // Backend expects form-urlencoded data for OAuth2PasswordRequestForm
+      final response = await _api.postForm(
         '/auth/login',
         data: {
           'username': email,
