@@ -7,6 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.router import api_router
 from app.config import settings
 from app.database import create_db_and_tables
+# Import all models so SQLModel can create tables
+from app.models import *  # noqa: F401, F403
 
 
 @asynccontextmanager

@@ -4,6 +4,8 @@ from app.models.student import Student
 from app.models.teacher import Teacher
 from app.models.academic import Subject, StudentSubject, AttendanceRecord, Result
 from app.models.fee import FeeStructure, StudentFee, FeePayment
+from app.models.timetable import Timetable
+from app.models.announcement import Announcement
 
 __all__ = [
     "School",
@@ -19,4 +21,6 @@ __all__ = [
     "FeeStructure",
     "StudentFee",
     "FeePayment",
+    "Timetable",
+    "Announcement",
 ]
