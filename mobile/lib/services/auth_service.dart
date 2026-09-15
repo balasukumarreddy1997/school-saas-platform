@@ -8,8 +8,9 @@ class AuthResult {
   final bool success;
   final String? error;
   final String? accessToken;
+  final String? role;
 
-  AuthResult({required this.success, this.error, this.accessToken});
+  AuthResult({required this.success, this.error, this.accessToken, this.role});
 }
 
 class AuthService {
@@ -33,13 +34,15 @@ class AuthService {
         final data = response.data;
         final accessToken = data['access_token'];
         final refreshToken = data['refresh_token'];
+        final role = data['role'] as String? ?? 'student';
 
         await _storage.write(key: ApiConfig.tokenKey, value: accessToken);
+        await _storage.write(key: 'user_role', value: role);
         if (refreshToken != null) {
           await _storage.write(key: ApiConfig.refreshTokenKey, value: refreshToken);
         }
 
-        return AuthResult(success: true, accessToken: accessToken);
+        return AuthResult(success: true, accessToken: accessToken, role: role);
       }
 
       return AuthResult(success: false, error: 'Login failed');
@@ -61,12 +64,18 @@ class AuthService {
     } finally {
       await _storage.delete(key: ApiConfig.tokenKey);
       await _storage.delete(key: ApiConfig.refreshTokenKey);
+      await _storage.delete(key: 'user_role');
     }
   }
 
   Future<bool> isLoggedIn() async {
     final token = await _storage.read(key: ApiConfig.tokenKey);
     return token != null;
+  }
+
+  Future<String> getRole() async {
+    final role = await _storage.read(key: 'user_role');
+    return role ?? 'student';
   }
 
   Future<DashboardData?> getDashboard() async {

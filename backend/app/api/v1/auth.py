@@ -15,7 +15,7 @@ from app.core.security import (
     current_active_user,
 )
 from app.database import get_async_session
-from app.models.user import User
+from app.models.user import User, UserRole, RoleType
 
 router = APIRouter()
 
@@ -23,6 +23,7 @@ router = APIRouter()
 class Token(BaseModel):
     access_token: str
     token_type: str
+    role: str
 
 
 class UserResponse(BaseModel):
@@ -58,13 +59,20 @@ async def login(
             detail="Inactive user",
         )
 
+    # Get user's primary role
+    role_result = await session.execute(
+        select(UserRole).where(UserRole.user_id == user.id).limit(1)
+    )
+    user_role = role_result.scalar_one_or_none()
+    role_name = user_role.role if user_role else "student"
+
     access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
     access_token = create_access_token(
-        data={"sub": str(user.id), "school_id": str(user.school_id)},
+        data={"sub": str(user.id), "school_id": str(user.school_id), "role": role_name},
         expires_delta=access_token_expires,
     )
 
-    return Token(access_token=access_token, token_type="bearer")
+    return Token(access_token=access_token, token_type="bearer", role=role_name)
 
 
 @router.get("/me", response_model=UserResponse)

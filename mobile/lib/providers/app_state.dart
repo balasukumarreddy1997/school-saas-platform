@@ -4,12 +4,14 @@ import '../services/api_service.dart';
 import '../services/auth_service.dart';
 
 enum AuthStatus { unknown, authenticated, unauthenticated }
+enum UserRole { student, teacher, admin }
 
 class AppState extends ChangeNotifier {
   final ApiService _apiService = ApiService();
   late final AuthService _authService;
 
   AuthStatus _authStatus = AuthStatus.unknown;
+  UserRole _userRole = UserRole.student;
   DashboardData? _dashboardData;
   bool _isLoading = false;
   String? _error;
@@ -20,6 +22,7 @@ class AppState extends ChangeNotifier {
   }
 
   AuthStatus get authStatus => _authStatus;
+  UserRole get userRole => _userRole;
   DashboardData? get dashboardData => _dashboardData;
   bool get isLoading => _isLoading;
   String? get error => _error;
@@ -29,11 +32,26 @@ class AppState extends ChangeNotifier {
     final isLoggedIn = await _authService.isLoggedIn();
     if (isLoggedIn) {
       _authStatus = AuthStatus.authenticated;
-      await loadDashboard();
+      final role = await _authService.getRole();
+      _userRole = _parseRole(role);
+      if (_userRole == UserRole.student) {
+        await loadDashboard();
+      }
     } else {
       _authStatus = AuthStatus.unauthenticated;
     }
     notifyListeners();
+  }
+
+  UserRole _parseRole(String role) {
+    switch (role.toLowerCase()) {
+      case 'teacher':
+        return UserRole.teacher;
+      case 'admin':
+        return UserRole.admin;
+      default:
+        return UserRole.student;
+    }
   }
 
   Future<bool> login(String email, String password) async {
@@ -45,7 +63,10 @@ class AppState extends ChangeNotifier {
 
     if (result.success) {
       _authStatus = AuthStatus.authenticated;
-      await loadDashboard();
+      _userRole = _parseRole(result.role ?? 'student');
+      if (_userRole == UserRole.student) {
+        await loadDashboard();
+      }
       _isLoading = false;
       notifyListeners();
       return true;

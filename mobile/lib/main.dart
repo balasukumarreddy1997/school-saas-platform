@@ -5,6 +5,7 @@ import 'config/theme.dart';
 import 'providers/app_state.dart';
 import 'screens/login_screen.dart';
 import 'screens/dashboard_screen.dart';
+import 'screens/teacher/teacher_dashboard_screen.dart';
 
 void main() {
   runApp(const SchoolApp());
@@ -32,7 +33,9 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authStatus = context.watch<AppState>().authStatus;
+    final appState = context.watch<AppState>();
+    final authStatus = appState.authStatus;
+    final userRole = appState.userRole;
 
     switch (authStatus) {
       case AuthStatus.unknown:
@@ -42,7 +45,19 @@ class AuthWrapper extends StatelessWidget {
           ),
         );
       case AuthStatus.authenticated:
-        return const DashboardScreen();
+        switch (userRole) {
+          case UserRole.teacher:
+            return TeacherDashboardScreen(
+              onLogout: () => appState.logout(),
+            );
+          case UserRole.admin:
+            // TODO: Add admin dashboard
+            return TeacherDashboardScreen(
+              onLogout: () => appState.logout(),
+            );
+          case UserRole.student:
+            return const DashboardScreen();
+        }
       case AuthStatus.unauthenticated:
         return const LoginScreen();
     }
