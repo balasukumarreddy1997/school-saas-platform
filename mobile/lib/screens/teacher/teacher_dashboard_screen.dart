@@ -4,6 +4,7 @@ import '../../services/api_service.dart';
 import 'mark_attendance_screen.dart';
 import 'enter_grades_screen.dart';
 import 'my_students_screen.dart';
+import 'teacher_timetable_screen.dart';
 
 class TeacherDashboardScreen extends StatefulWidget {
   final VoidCallback onLogout;
@@ -227,11 +228,12 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
               ),
             ),
             _buildActionCard(
-              'Timetable',
-              Icons.calendar_today_outlined,
+              'My Schedule',
+              Icons.schedule_outlined,
               Colors.teal,
-              () => ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Coming soon!')),
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const TeacherTimetableScreen()),
               ),
             ),
           ],

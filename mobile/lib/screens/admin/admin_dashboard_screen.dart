@@ -4,6 +4,9 @@ import '../../services/api_service.dart';
 import 'manage_students_screen.dart';
 import 'manage_teachers_screen.dart';
 import 'manage_subjects_screen.dart';
+import 'manage_fees_screen.dart';
+import 'manage_timetable_screen.dart';
+import 'manage_announcements_screen.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   final VoidCallback onLogout;
@@ -224,6 +227,39 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const ManageSubjectsScreen()),
+          ),
+        ),
+        const SizedBox(height: 8),
+        _buildManagementTile(
+          'Fee Management',
+          'Manage fee structures and payments',
+          Icons.payments_outlined,
+          Colors.purple,
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const ManageFeesScreen()),
+          ),
+        ),
+        const SizedBox(height: 8),
+        _buildManagementTile(
+          'Timetable',
+          'Manage class schedules',
+          Icons.schedule_outlined,
+          Colors.teal,
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const ManageTimetableScreen()),
+          ),
+        ),
+        const SizedBox(height: 8),
+        _buildManagementTile(
+          'Announcements',
+          'Create and manage announcements',
+          Icons.campaign_outlined,
+          Colors.indigo,
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const ManageAnnouncementsScreen()),
           ),
         ),
       ],

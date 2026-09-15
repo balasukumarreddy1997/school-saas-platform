@@ -6,6 +6,9 @@ import 'subjects_screen.dart';
 import 'results_screen.dart';
 import 'attendance_screen.dart';
 import 'profile_screen.dart';
+import 'fees_screen.dart';
+import 'timetable_screen.dart';
+import 'announcements_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -136,10 +139,10 @@ class DashboardScreen extends StatelessWidget {
                     GridView.count(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      crossAxisCount: 2,
+                      crossAxisCount: 3,
                       mainAxisSpacing: 12,
                       crossAxisSpacing: 12,
-                      childAspectRatio: 1.5,
+                      childAspectRatio: 1.0,
                       children: [
                         _buildActionCard(
                           context,
@@ -173,9 +176,29 @@ class DashboardScreen extends StatelessWidget {
                         ),
                         _buildActionCard(
                           context,
-                          'Profile',
-                          Icons.person_outline,
+                          'Timetable',
+                          Icons.schedule_outlined,
+                          Colors.teal,
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const TimetableScreen()),
+                          ),
+                        ),
+                        _buildActionCard(
+                          context,
+                          'Fees',
+                          Icons.payments_outlined,
                           Colors.purple,
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const FeesScreen()),
+                          ),
+                        ),
+                        _buildActionCard(
+                          context,
+                          'Profile',
+                          Icons.person_outlined,
+                          Colors.indigo,
                           () => Navigator.push(
                             context,
                             MaterialPageRoute(builder: (_) => const ProfileScreen()),
@@ -185,33 +208,63 @@ class DashboardScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
 
-                    // Recent Activity
-                    const Text(
-                      'Recent Activity',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    // Announcements
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Announcements',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const AnnouncementsScreen()),
+                          ),
+                          child: const Text('See All'),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
                     Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Center(
-                          child: Column(
+                      child: InkWell(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const AnnouncementsScreen()),
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
                             children: [
-                              Icon(
-                                Icons.history,
-                                size: 48,
-                                color: Colors.grey.shade400,
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(Icons.campaign, color: Colors.blue),
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'No recent activity',
-                                style: TextStyle(
-                                  color: Colors.grey.shade600,
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'View Announcements',
+                                      style: TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      'Stay updated with school news',
+                                      style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                                    ),
+                                  ],
                                 ),
                               ),
+                              const Icon(Icons.chevron_right, color: Colors.grey),
                             ],
                           ),
                         ),
