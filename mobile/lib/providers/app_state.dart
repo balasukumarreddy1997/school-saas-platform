@@ -48,6 +48,7 @@ class AppState extends ChangeNotifier {
       case 'teacher':
         return UserRole.teacher;
       case 'admin':
+      case 'management':
         return UserRole.admin;
       default:
         return UserRole.student;

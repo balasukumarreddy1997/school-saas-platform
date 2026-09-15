@@ -6,6 +6,7 @@ import 'providers/app_state.dart';
 import 'screens/login_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/teacher/teacher_dashboard_screen.dart';
+import 'screens/admin/admin_dashboard_screen.dart';
 
 void main() {
   runApp(const SchoolApp());
@@ -51,8 +52,7 @@ class AuthWrapper extends StatelessWidget {
               onLogout: () => appState.logout(),
             );
           case UserRole.admin:
-            // TODO: Add admin dashboard
-            return TeacherDashboardScreen(
+            return AdminDashboardScreen(
               onLogout: () => appState.logout(),
             );
           case UserRole.student:
