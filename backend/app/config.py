@@ -1,3 +1,4 @@
+from typing import List, Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -9,9 +10,10 @@ class Settings(BaseSettings):
     )
 
     app_name: str = "School SaaS Platform"
-    debug: bool = False
+    debug: bool = True
 
-    database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/school_saas"
+    # SQLite for local dev (no server needed), PostgreSQL for production
+    database_url: str = "sqlite+aiosqlite:///./school_saas.db"
 
     jwt_secret: str = "CHANGE-THIS-SECRET-IN-PRODUCTION"
     jwt_algorithm: str = "HS256"
@@ -23,7 +25,7 @@ class Settings(BaseSettings):
     r2_secret_access_key: str = ""
     r2_bucket_name: str = "school-content"
 
-    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:5173"]
+    cors_origins: List[str] = ["http://localhost:3000", "http://localhost:5173", "http://localhost:8080"]
 
 
 settings = Settings()

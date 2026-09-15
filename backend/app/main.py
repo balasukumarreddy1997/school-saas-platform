@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Dict
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -36,7 +36,7 @@ app.include_router(api_router, prefix="/api/v1")
 
 
 @app.get("/")
-async def root() -> dict[str, str]:
+async def root() -> Dict[str, str]:
     return {
         "name": settings.app_name,
         "version": "0.1.0",

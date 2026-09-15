@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
@@ -21,27 +21,34 @@ class StudentProfile(BaseModel):
     first_name: str
     last_name: str
     admission_number: str
-    roll_number: str | None
-    date_of_birth: str | None
-    gender: str | None
-    parent_name: str | None
-    parent_phone: str | None
+    roll_number: Optional[str]
+    date_of_birth: Optional[str]
+    gender: Optional[str]
+    parent_name: Optional[str]
+    parent_phone: Optional[str]
 
     class Config:
         from_attributes = True
 
 
+class AttendanceData(BaseModel):
+    total_days: int
+    present: int
+    absent: int
+    percentage: float
+
+
 class DashboardResponse(BaseModel):
     student: StudentProfile
-    attendance: dict
-    recent_results: list
-    announcements: list
+    attendance: AttendanceData
+    recent_results: List[dict]
+    announcements: List[dict]
 
 
 async def get_student_role(
     session: AsyncSession,
     user: User,
-) -> UserRole | None:
+) -> Optional[UserRole]:
     result = await session.execute(
         select(UserRole).where(
             UserRole.user_id == user.id,
@@ -54,7 +61,7 @@ async def get_student_role(
 async def get_student_profile(
     session: AsyncSession,
     user: User,
-) -> Student | None:
+) -> Optional[Student]:
     result = await session.execute(
         select(Student).where(Student.user_id == user.id)
     )
@@ -130,12 +137,12 @@ async def get_student_dashboard(
 
     return DashboardResponse(
         student=profile,
-        attendance={
-            "total_days": 0,
-            "present": 0,
-            "absent": 0,
-            "percentage": 0.0,
-        },
+        attendance=AttendanceData(
+            total_days=0,
+            present=0,
+            absent=0,
+            percentage=0.0,
+        ),
         recent_results=[],
         announcements=[],
     )

@@ -4,8 +4,9 @@ Run with: python -m scripts.seed_data
 """
 import asyncio
 import uuid
-from datetime import datetime
 
+from passlib.context import CryptContext
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
@@ -15,14 +16,19 @@ from app.models.school import School
 from app.models.user import User, UserRole, RoleType
 from app.models.student import Student
 
-from passlib.context import CryptContext
-
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
-PASSWORD_HASH = pwd_context.hash("password123")
+
+
+def get_password_hash(password: str) -> str:
+    return pwd_context.hash(password)
 
 
 async def seed_database():
-    engine = create_async_engine(settings.database_url, echo=True)
+    connect_args = {}
+    if settings.database_url.startswith("sqlite"):
+        connect_args = {"check_same_thread": False}
+
+    engine = create_async_engine(settings.database_url, echo=True, connect_args=connect_args)
 
     async with engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)
@@ -31,7 +37,6 @@ async def seed_database():
 
     async with async_session() as session:
         # Check if school already exists
-        from sqlalchemy import select
         result = await session.execute(select(School).where(School.code == "SJPS"))
         existing_school = result.scalar_one_or_none()
 
@@ -54,13 +59,16 @@ async def seed_database():
         session.add(school)
         print(f"Created school: {school.name} (ID: {school_id})")
 
+        # Hash password
+        password_hash = get_password_hash("password123")
+
         # Create student user
         student_user_id = uuid.uuid4()
         student_user = User(
             id=student_user_id,
             school_id=school_id,
             email="rahul.sharma@stjosephs.edu",
-            hashed_password=PASSWORD_HASH,
+            hashed_password=password_hash,
             first_name="Rahul",
             last_name="Sharma",
             phone="+91-9876543211",
@@ -75,7 +83,7 @@ async def seed_database():
         student_role = UserRole(
             id=uuid.uuid4(),
             user_id=student_user_id,
-            role=RoleType.STUDENT,
+            role=RoleType.STUDENT.value,
         )
         session.add(student_role)
 
@@ -86,7 +94,6 @@ async def seed_database():
             school_id=school_id,
             admission_number="SJPS-2026-001",
             roll_number="15",
-            date_of_birth=None,
             gender="Male",
             parent_name="Mr. Sharma",
             parent_phone="+91-9876543212",
@@ -102,7 +109,7 @@ async def seed_database():
             id=mgmt_user_id,
             school_id=school_id,
             email="admin@stjosephs.edu",
-            hashed_password=PASSWORD_HASH,
+            hashed_password=password_hash,
             first_name="Admin",
             last_name="User",
             phone="+91-9876543213",
@@ -115,7 +122,7 @@ async def seed_database():
         mgmt_role = UserRole(
             id=uuid.uuid4(),
             user_id=mgmt_user_id,
-            role=RoleType.MANAGEMENT,
+            role=RoleType.MANAGEMENT.value,
         )
         session.add(mgmt_role)
         print(f"Created management user: {mgmt_user.email}")
@@ -126,7 +133,7 @@ async def seed_database():
             id=teacher_user_id,
             school_id=school_id,
             email="teacher@stjosephs.edu",
-            hashed_password=PASSWORD_HASH,
+            hashed_password=password_hash,
             first_name="Priya",
             last_name="Iyer",
             phone="+91-9876543214",
@@ -139,21 +146,21 @@ async def seed_database():
         teacher_role = UserRole(
             id=uuid.uuid4(),
             user_id=teacher_user_id,
-            role=RoleType.TEACHER,
+            role=RoleType.TEACHER.value,
         )
         session.add(teacher_role)
         print(f"Created teacher user: {teacher_user.email}")
 
         await session.commit()
-        print("\n" + "="*50)
+        print("\n" + "=" * 50)
         print("SEED DATA CREATED SUCCESSFULLY!")
-        print("="*50)
+        print("=" * 50)
         print("\nTest Accounts:")
-        print("-"*50)
+        print("-" * 50)
         print("Student:    rahul.sharma@stjosephs.edu / password123")
         print("Teacher:    teacher@stjosephs.edu / password123")
         print("Management: admin@stjosephs.edu / password123")
-        print("-"*50)
+        print("-" * 50)
 
 
 if __name__ == "__main__":

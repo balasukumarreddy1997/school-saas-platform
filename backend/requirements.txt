@@ -1,0 +1,21 @@
+# Core
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic-settings>=2.1.0
+
+# Database
+sqlmodel>=0.0.14
+aiosqlite>=0.19.0
+greenlet>=3.0.0
+
+# Auth
+fastapi-users[sqlalchemy]>=13.0.0
+python-jose[cryptography]>=3.3.0
+passlib[argon2]>=1.7.4
+
+# HTTP
+httpx>=0.26.0
+
+# Utils
+python-multipart>=0.0.6
+email-validator>=2.1.0

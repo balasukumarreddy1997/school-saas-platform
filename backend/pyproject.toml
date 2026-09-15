@@ -6,7 +6,7 @@ authors = ["School SaaS Team"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.8"
 fastapi = "^0.109.0"
 uvicorn = {extras = ["standard"], version = "^0.27.0"}
 sqlmodel = "^0.0.14"
