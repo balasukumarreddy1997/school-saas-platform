@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../config/theme.dart';
 import '../providers/app_state.dart';
+import 'subjects_screen.dart';
+import 'results_screen.dart';
+import 'attendance_screen.dart';
+import 'profile_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -142,28 +146,40 @@ class DashboardScreen extends StatelessWidget {
                           'Subjects',
                           Icons.menu_book_outlined,
                           Colors.blue,
-                          () {},
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const SubjectsScreen()),
+                          ),
                         ),
                         _buildActionCard(
                           context,
                           'Results',
                           Icons.assessment_outlined,
                           Colors.green,
-                          () {},
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const ResultsScreen()),
+                          ),
                         ),
                         _buildActionCard(
                           context,
                           'Attendance',
                           Icons.calendar_today_outlined,
                           Colors.orange,
-                          () {},
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const AttendanceScreen()),
+                          ),
                         ),
                         _buildActionCard(
                           context,
                           'Profile',
                           Icons.person_outline,
                           Colors.purple,
-                          () {},
+                          () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                          ),
                         ),
                       ],
                     ),
@@ -302,7 +318,10 @@ class DashboardScreen extends StatelessWidget {
                 title: const Text('Profile'),
                 onTap: () {
                   Navigator.pop(context);
-                  // Navigate to profile
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                  );
                 },
               ),
               ListTile(
