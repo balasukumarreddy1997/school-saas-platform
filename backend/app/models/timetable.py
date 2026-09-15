@@ -9,10 +9,10 @@ class Timetable(SQLModel, table=True):
     __tablename__ = "timetables"
 
     id: str = Field(default_factory=lambda: uuid.uuid4().hex, primary_key=True)
-    school_id: str = Field(foreign_key="schools.id", index=True)
+    school_id: str = Field(index=True)
     class_name: str = Field(max_length=50)  # e.g., "10-A", "9-B"
-    subject_id: str = Field(foreign_key="subjects.id")
-    teacher_id: Optional[str] = Field(default=None, foreign_key="teachers.id")
+    subject_id: str = Field()
+    teacher_id: Optional[str] = Field(default=None)
     day_of_week: int = Field(ge=0, le=6)  # 0=Monday, 6=Sunday
     start_time: str = Field(max_length=10)  # "09:00"
     end_time: str = Field(max_length=10)  # "09:45"
@@ -31,11 +31,11 @@ class ClassSection(SQLModel, table=True):
     __tablename__ = "class_sections"
 
     id: str = Field(default_factory=lambda: uuid.uuid4().hex, primary_key=True)
-    school_id: str = Field(foreign_key="schools.id", index=True)
+    school_id: str = Field(index=True)
     name: str = Field(max_length=50)  # e.g., "10-A"
     grade: int = Field(ge=1, le=12)  # Grade 1-12
     section: str = Field(max_length=10)  # A, B, C, etc.
-    class_teacher_id: Optional[str] = Field(default=None, foreign_key="teachers.id")
+    class_teacher_id: Optional[str] = Field(default=None)
     room: Optional[str] = Field(default=None, max_length=50)
     is_active: bool = Field(default=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)
